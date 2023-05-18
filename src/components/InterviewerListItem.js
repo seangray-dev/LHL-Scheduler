@@ -7,16 +7,18 @@ const InterviewerListItem = (props) => {
     'interviewers__item--selected': props.selected,
   });
 
+  const handleClick = () => {
+    props.setInterviewer();
+  };
+
   return (
-    <li
-      className={interviewerClass}
-      onClick={() => props.setInterviewer(props.id)}>
+    <li className={interviewerClass} onClick={handleClick}>
       <img
         className='interviewers__item-image'
-        src='https://i.imgur.com/LpaY82x.png'
+        src={props.avatar}
         alt={props.name}
       />
-      {props.selected && props.name}{' '}
+      {props.selected && props.name}
     </li>
   );
 };
