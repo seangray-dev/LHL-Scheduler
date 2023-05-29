@@ -14,6 +14,7 @@ export default function Appointment(props) {
   const EMPTY = 'EMPTY';
   const SHOW = 'SHOW';
   const CREATE = 'CREATE';
+  const EDIT = 'EDIT';
   const SAVING = 'SAVING';
   const DELETING = 'DELETING';
   const CONFIRM = 'CONFIRM';
@@ -30,14 +31,25 @@ export default function Appointment(props) {
 
     transition(SAVING);
 
-    props
-      .bookInterview(props.id, interview)
-      .then(() => {
-        transition(SHOW);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+    if (mode === CREATE) {
+      props
+        .bookInterview(props.id, interview)
+        .then(() => {
+          transition(SHOW);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    } else if (mode === EDIT) {
+      props
+        .bookInterview(props.id, interview)
+        .then(() => {
+          transition(SHOW);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    }
   }
 
   function cancelInterview() {
@@ -58,6 +70,10 @@ export default function Appointment(props) {
     }
   }
 
+  function editInterview() {
+    transition(EDIT);
+  }
+
   return (
     <article className='appointment' data-testid='appointment'>
       <Header time={props.time} />
@@ -66,16 +82,18 @@ export default function Appointment(props) {
           student={props.interview.student}
           interviewer={props.interview.interviewer}
           onDelete={cancelInterview}
-          onEdit={() => console.log('EDIT')}
+          onEdit={editInterview}
         />
       )}
       {mode === EMPTY && <Empty onAdd={() => transition(CREATE)} />}
-      {mode === CREATE && (
+      {(mode === CREATE || mode === EDIT) && (
         <Form
           interviewers={props.interviewers}
           onSave={save}
           onCancel={() => back()}
           onDelete={cancelInterview}
+          name={props.interview ? props.interview.student : ''}
+          interviewer={props.interview ? props.interview.interviewer.id : null}
         />
       )}
       {mode === SAVING && <Status message={'SAVING'}></Status>}
