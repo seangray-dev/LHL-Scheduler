@@ -22,57 +22,53 @@ export default function Application(props) {
 
   const interviewers = getInterviewersForDay(state, state.day);
 
-  function bookInterview(id, interview) {
-    return axios
-      .put(`/api/appointments/${id}`, { interview })
-      .then((response) => {
-        const appointment = {
-          ...state.appointments[id],
-          interview: { ...interview },
-        };
-
-        const appointments = {
-          ...state.appointments,
-          [id]: appointment,
-        };
-
-        setState({
-          ...state,
-          appointments,
-        });
-
-        return response;
-      })
-      .catch((error) => {
-        console.log(error);
+  const bookInterview = async (id, interview) => {
+    try {
+      const response = await axios.put(`/api/appointments/${id}`, {
+        interview,
       });
-  }
+      const appointment = {
+        ...state.appointments[id],
+        interview: { ...interview },
+      };
 
-  function cancelInterview(id) {
-    return axios
-      .delete(`/api/appointments/${id}`)
-      .then((response) => {
-        const appointment = {
-          ...state.appointments[id],
-          interview: null,
-        };
+      const appointments = {
+        ...state.appointments,
+        [id]: appointment,
+      };
 
-        const appointments = {
-          ...state.appointments,
-          [id]: appointment,
-        };
-
-        setState({
-          ...state,
-          appointments,
-        });
-
-        return response;
-      })
-      .catch((error) => {
-        console.log(error);
+      setState({
+        ...state,
+        appointments,
       });
-  }
+      return response;
+    } catch (error) {
+      throw Error;
+    }
+  };
+
+  const cancelInterview = async (id) => {
+    try {
+      const response = await axios.delete(`/api/appointments/${id}`);
+      const appointment = {
+        ...state.appointments[id],
+        interview: null,
+      };
+
+      const appointments = {
+        ...state.appointments,
+        [id]: appointment,
+      };
+
+      setState({
+        ...state,
+        appointments,
+      });
+      return response;
+    } catch (error) {
+      throw Error;
+    }
+  };
 
   const schedule = dailyAppointments.map((appointment) => {
     const interview = getInterview(state, appointment.interview);
